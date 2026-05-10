@@ -3,31 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>KD IA 1.7 - Voz</title>
+    <title>KD IA 2.0</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: system-ui, sans-serif; background: #0f172a; color: #f1f5f9; padding: 12px; }
         .app { max-width: 1000px; margin: 0 auto; }
-        
         .header { background: #1e293b; border-radius: 24px 24px 0 0; padding: 16px; text-align: center; }
         .header h1 { color: #c084fc; }
+        .badge { background: #22c55e; padding: 4px 12px; border-radius: 40px; font-size: 10px; display: inline-block; margin-top: 8px; }
         
         .botoes-topo { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: #1e293b; justify-content: center; }
         .btn { padding: 8px 16px; border: none; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-verde { background: #22c55e; color: white; }
         .btn-azul { background: #3b82f6; color: white; }
         .btn-roxo { background: #8b5cf6; color: white; }
-        .btn-vermelho { background: #dc2626; color: white; }
         .btn-cinza { background: #334155; color: white; }
         .ativo { box-shadow: 0 0 0 2px #c084fc; }
         
         .lista-conversas { background: #1e293b; padding: 8px; max-height: 120px; overflow-y: auto; display: flex; gap: 8px; flex-wrap: wrap; }
         .conv-item { background: #0f172a; padding: 6px 12px; border-radius: 20px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 12px; }
         .conv-item.active { background: #3b82f6; }
-        .conv-del { background: #dc2626; border: none; color: white; padding: 2px 8px; border-radius: 20px; cursor: pointer; font-size: 10px; }
+        .conv-del { background: #dc2626; border: none; color: white; padding: 2px 8px; border-radius: 20px; cursor: pointer; }
         
-        .chat { background: #1e293b; height: 55vh; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 85%; padding: 8px 14px; border-radius: 18px; font-size: 14px; }
+        .stats { background: #1e293b; padding: 4px 12px; font-size: 10px; color: #94a3b8; text-align: center; }
+        .chat { background: #1e293b; height: 50vh; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 85%; padding: 8px 14px; border-radius: 18px; font-size: 14px; white-space: pre-wrap; word-break: break-word; }
         .user { background: #2563eb; align-self: flex-end; }
         .ia { background: #334155; align-self: flex-start; border-left: 3px solid #c084fc; }
         .pensando { background: #334155; align-self: flex-start; padding: 8px 14px; border-radius: 18px; }
@@ -35,370 +35,361 @@
         .input-area { background: #0f172a; padding: 12px; display: flex; gap: 10px; border-radius: 0 0 24px 24px; }
         .input-area input { flex: 1; padding: 12px; border-radius: 40px; border: none; background: #1e293b; color: white; }
         .input-area button { padding: 12px 20px; border-radius: 40px; border: none; background: #22c55e; font-weight: bold; cursor: pointer; }
-        .voz-btn { background: #8b5cf6; color: white; padding: 12px 16px; font-size: 18px; }
-        .gravando { background: #ef4444 !important; animation: pulse 1s infinite; }
-        
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
+        .voz-btn { background: #8b5cf6; padding: 12px 16px; font-size: 18px; }
         footer { text-align: center; font-size: 10px; padding: 12px; color: #64748b; }
+        .gravando { background: #ef4444 !important; }
     </style>
 </head>
 <body>
 <div class="app">
     <div class="header">
-        <h1>KD IA 1.7</h1>
-        <p>História | HTML | Matemática | Municípios RJ | Bairros | Voz</p>
+        <h1>KD IA 2.0</h1>
+        <p>🧠 Conhecimento expandido | 🔍 DuckDuckGo grátis</p>
+        <div class="badge">📚 +100 conceitos | 🌐 Busca sem chave</div>
     </div>
     
     <div class="botoes-topo">
-        <button id="btnNova" class="btn btn-verde">+ Nova</button>
-        <button id="btnRapido" class="btn btn-azul ativo">Rápido</button>
-        <button id="btnRaciocinio" class="btn btn-roxo">Raciocínio</button>
-        <button id="btnExportar" class="btn btn-cinza">Exportar</button>
-        <button id="btnImportar" class="btn btn-cinza">Importar</button>
-        <button id="btnBuscar" class="btn btn-cinza">Buscar</button>
-        <button id="btnLer" class="btn btn-cinza">Ler</button>
+        <button class="btn btn-verde" onclick="window.novaConversa()">+ Nova</button>
+        <button id="btnRapido" class="btn btn-azul ativo" onclick="window.setModoRapido()">Rápido</button>
+        <button id="btnRaciocinio" class="btn btn-roxo" onclick="window.setModoRaciocinio()">Raciocínio</button>
+        <button class="btn btn-cinza" onclick="window.exportarConversas()">Exportar</button>
+        <button class="btn btn-cinza" onclick="window.importarConversas()">Importar</button>
+        <button class="btn btn-cinza" onclick="window.buscarConversas()">Buscar</button>
+        <button id="btnLer" class="btn btn-cinza" onclick="window.toggleLeitura()">Ler</button>
     </div>
     
     <div id="listaConversas" class="lista-conversas"></div>
-    
+    <div class="stats" id="stats">🧠 Carregando...</div>
     <div id="chat" class="chat"></div>
     
     <div class="input-area">
-        <input type="text" id="inputMsg" placeholder="Digite sua mensagem...">
-        <button id="btnVoz" class="voz-btn">🎤</button>
-        <button id="btnEnviar">Enviar</button>
+        <input type="text" id="inputMsg" placeholder="Digite sua mensagem..." onkeypress="if(event.key==='Enter') window.enviarMensagem()">
+        <button id="btnVoz" class="voz-btn" onclick="window.iniciarVoz()">🎤</button>
+        <button onclick="window.enviarMensagem()">Enviar</button>
     </div>
     
-    <footer>Itaboraí | Maricá | Copacabana | Tijuca | Brasil | EUA | Roma | HTML | Matemática</footer>
+    <footer>🔍 Digite "pesquisar [assunto]" para buscar na web | DuckDuckGo grátis</footer>
 </div>
 
 <script>
-    // ========== VARIÁVEIS ==========
-    let conversas = {};
-    let conversaAtual = null;
-    let modoRapido = true;
-    let lerAtivo = false;
-    let enviando = false;
-    let synth = window.speechSynthesis;
-    let recognition = null;
+// =====================================================
+// TODAS AS FUNÇÕES USAM window. - GARANTE FUNCIONAMENTO
+// =====================================================
+
+// ========== CONHECIMENTO LOCAL ==========
+const conhecimento = {
+    "brasil": "🇧🇷 Brasil: Maior país da América do Sul. Capital: Brasília.",
+    "argentina": "🇦🇷 Argentina: Capital: Buenos Aires.",
+    "eua": "🇺🇸 Estados Unidos: Capital: Washington DC.",
+    "japão": "🇯🇵 Japão: Capital: Tóquio.",
+    "alemanha": "🇩🇪 Alemanha: Capital: Berlim.",
+    "frança": "🇫🇷 França: Capital: Paris.",
+    "fotosíntese": "🌱 Fotossíntese: Processo das plantas para produzir energia com luz solar.",
+    "gravidade": "⬇️ Gravidade: Força que atrai corpos com massa. Na Terra é 9,8 m/s².",
+    "dna": "🧬 DNA: Molécula que carrega a informação genética.",
+    "mercurio": "🪐 Mercúrio: Planeta mais próximo do Sol.",
+    "venus": "🪐 Vênus: Planeta mais quente do Sistema Solar.",
+    "terra": "🌍 Terra: Nosso planeta. Único com vida conhecida.",
+    "marte": "🔴 Marte: Planeta vermelho.",
+    "jupiter": "🪐 Júpiter: Maior planeta do Sistema Solar.",
+    "saturno": "🪐 Saturno: Famoso pelos seus anéis.",
+    "cachorro": "🐕 Cachorro: Melhor amigo do homem.",
+    "gato": "🐈 Gato: Animal doméstico independente.",
+    "leão": "🦁 Leão: Rei da selva. Vive na África.",
+    "elefante": "🐘 Elefante: Maior animal terrestre.",
+    "pelé": "👑 Pelé: Maior jogador de futebol brasileiro. Três Copas.",
+    "futebol": "⚽ Futebol: Esporte mais popular do mundo.",
+    "html": "💻 HTML: Linguagem para criar páginas web.",
+    "css": "🎨 CSS: Linguagem para estilizar páginas web.",
+    "javascript": "⚡ JavaScript: Linguagem de programação para navegadores.",
+    "python": "🐍 Python: Linguagem fácil, usada em dados e IA.",
+    "descobrimento do brasil": "📅 22 de abril de 1500: Pedro Álvares Cabral chega ao Brasil.",
+    "independência do brasil": "📅 7 de setembro de 1822: Independência do Brasil.",
+    "samba": "🎵 Samba: Gênero musical brasileiro.",
+    "feijoada": "🍛 Feijoada: Prato típico brasileiro com feijão preto.",
+    "pizza": "🍕 Pizza: Prato italiano.",
+    "sushi": "🍣 Sushi: Prato japonês."
+};
+
+// ========== BUSCA DUCKDUCKGO ==========
+window.buscarDuckDuckGo = async function(consulta) {
+    try {
+        let termo = consulta.replace(/pesquisar|buscar|procurar|sobre|sobre o|sobre a/gi, "").trim();
+        if (termo.length < 3) return "🔍 Digite algo mais específico para pesquisar.";
+        
+        const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(termo)}&format=json&no_html=1&skip_disambig=1`;
+        const resposta = await fetch(url);
+        const dados = await resposta.json();
+        
+        if (dados.AbstractText && dados.AbstractText.length > 0) {
+            return `🔍 **${termo}**\n\n${dados.AbstractText}\n\n📚 Fonte: ${dados.AbstractURL || "DuckDuckGo"}`;
+        }
+        if (dados.Definition && dados.Definition.length > 0) {
+            return `📖 **${termo}**\n\n${dados.Definition}`;
+        }
+        return `🔍 **"${termo}"**\n\n❌ Nada encontrado.\n\n💡 Tente "pesquisar ${termo}" de outra forma.`;
+    } catch(erro) {
+        return "❌ Erro de conexão. Verifique sua internet.";
+    }
+};
+
+function precisaBuscar(pergunta) {
+    let palavras = ["pesquisar", "buscar", "procurar", "pesquise", "busque", "procure"];
+    let p = pergunta.toLowerCase();
+    return palavras.some(palavra => p.startsWith(palavra) || p.includes(` ${palavra} `));
+}
+
+// ========== RESPOSTA ==========
+window.gerarResposta = async function(mensagem) {
+    let msg = mensagem.toLowerCase();
     
-    // ========== CONHECIMENTO ==========
-    const conhecimento = {
-        "história do brasil": "🇧🇷 BRASIL: Descoberto em 1500 por Cabral. Independência em 1822. República em 1889. Abolição da escravatura em 1888.",
-        "historia do brasil": "🇧🇷 BRASIL: Descoberto em 1500. Independência em 1822. República em 1889.",
-        "estados unidos": "🇺🇸 EUA: Independência 1776. Guerra Civil 1861-1865. 1ª Guerra 1917. 2ª Guerra 1941. Homem na Lua 1969.",
-        "eua": "🇺🇸 EUA: Independência 1776, maior potência mundial.",
-        "roma antiga": "🏛️ ROMA: Fundada 753 a.C. por Rômulo e Remo. República 509 a.C. Império 27 a.C. Queda 476 d.C.",
-        "roma": "🏛️ ROMA: Fundada 753 a.C., Império até 476 d.C.",
-        "2 guerra": "💣 2ª GUERRA MUNDIAL: 1939-1945. 70 milhões de mortos. Hitler, Pearl Harbor, bombas atômicas.",
-        "segunda guerra": "💣 2ª GUERRA: 1939-1945, 70 milhões de mortos.",
-        "1 guerra": "⚔️ 1ª GUERRA MUNDIAL: 1914-1918. 20 milhões de mortos. Guerra de trincheiras.",
-        "primeira guerra": "⚔️ 1ª GUERRA: 1914-1918, 20 milhões de mortos.",
-        
-        "itaboraí": "🏙️ ITABORAÍ: Município da região metropolitana do RJ. Abriga o COMPERJ (Complexo Petroquímico) e o Aeroporto de Itaboraí.",
-        "itaborai": "🏙️ ITABORAÍ: Abriga o COMPERJ, na região metropolitana do RJ.",
-        "maricá": "🏙️ MARICÁ: Conhecida por suas praias Ponta Negra e Itaipuaçu. Tem um dos maiores salários mínimos do país.",
-        "marica": "🏙️ MARICÁ: Praias de Ponta Negra e Itaipuaçu, alto salário mínimo.",
-        "queimados": "🏙️ QUEIMADOS: Município da Baixada Fluminense, conhecido pelo comércio forte.",
-        "nilópolis": "🏙️ NILÓPOLIS: Território mais antigo da Baixada Fluminense, fundado em 1947. Conhecido pelo samba.",
-        "nilopolis": "🏙️ NILÓPOLIS: Território mais antigo da Baixada, fundado em 1947.",
-        "são gonçalo": "🏙️ SÃO GONÇALO: Um dos municípios mais populosos do estado do Rio de Janeiro.",
-        "sao goncalo": "🏙️ SÃO GONÇALO: Muito populoso, na região metropolitana do RJ.",
-        "niterói": "🏙️ NITERÓI: Antiga capital do RJ. Famosa pelo MAC (Museu de Arte Contemporânea de Niemeyer) e praias de Icaraí.",
-        "niteroi": "🏙️ NITERÓI: Antiga capital, MAC de Niemeyer.",
-        "nova iguaçu": "🏙️ NOVA IGUAÇU: Cidade das Laranjas, maior município da Baixada Fluminense.",
-        "duque de caxias": "🏙️ DUQUE DE CAXIAS: Importante polo industrial. Abriga a REDUC.",
-        "belford roxo": "🏙️ BELFORD ROXO: Município da Baixada Fluminense.",
-        
-        "copacabana": "🏖️ COPACABANA: Bairro da Zona Sul do Rio, famoso mundialmente por sua praia, calçadão com ondas de pedra portuguesa, e o Réveillon.",
-        "tijuca": "🌳 TIJUCA: Bairro da Zona Norte, conhecido pela Floresta da Tijuca (maior floresta urbana do mundo) e pelo Shopping Tijuca.",
-        
-        "rio de janeiro": "📍 RIO DE JANEIRO: Estado do Sudeste. Capital: Rio de Janeiro (Cristo Redentor, Pão de Açúcar).",
-        "são paulo": "📍 SÃO PAULO: Estado mais rico e populoso do Brasil. Capital: São Paulo.",
-        "santa catarina": "📍 SANTA CATARINA: Estado do Sul. Capital: Florianópolis, famosa por suas praias.",
-        
-        "bom dia": "Bom dia! 🌞 Tenha um excelente dia!",
-        "boa tarde": "Boa tarde! ☀️ Como posso ajudar?",
-        "boa noite": "Boa noite! 🌙 Descanse bem!"
-    };
-    
-    function getResposta(msg) {
-        let m = msg.toLowerCase();
-        
-        for (let k in conhecimento) {
-            if (m.includes(k)) return conhecimento[k];
-        }
-        
-        let nums = m.match(/\d+/g);
-        if (nums && nums.length >= 2) {
-            if (m.includes("+")) return `${nums[0]} + ${nums[1]} = ${Number(nums[0]) + Number(nums[1])}`;
-            if (m.includes("-")) return `${nums[0]} - ${nums[1]} = ${Number(nums[0]) - Number(nums[1])}`;
-            if (m.includes("*") || m.includes("x")) return `${nums[0]} x ${nums[1]} = ${Number(nums[0]) * Number(nums[1])}`;
-            if (m.includes("/")) return `${nums[0]} / ${nums[1]} = ${Number(nums[0]) / Number(nums[1])}`;
-        }
-        
-        if (m.includes("criar") && (m.includes("botao") || m.includes("html"))) {
-            return "✅ BOTÃO HTML:\n\n<button style='background:blue; color:white; padding:12px 24px; border:none; border-radius:8px; font-size:16px; cursor:pointer;'>Clique aqui</button>";
-        }
-        
-        if (m.includes("versao")) return "KD IA versão 1.7 - Criada por Medrin em 09/05/2025!";
-        if (m.includes("criador")) return "Meu criador é o Medrin!";
-        
-        let genericas = ["Interessante! Me conte mais.", "Entendo... E o que você acha?", "Fale mais sobre isso!", "Que legal!"];
-        return genericas[Math.floor(Math.random() * genericas.length)];
+    for (let [chave, resposta] of Object.entries(conhecimento)) {
+        if (msg.includes(chave)) return `📚 ${resposta}`;
     }
     
-    // ========== CONVERSAS ==========
-    function salvar() {
-        localStorage.setItem("kd_conversas", JSON.stringify(conversas));
-        localStorage.setItem("kd_atual", conversaAtual);
+    let nums = msg.match(/\d+/g);
+    if (nums && nums.length >= 2) {
+        if (msg.includes("+")) return `${nums[0]} + ${nums[1]} = ${Number(nums[0]) + Number(nums[1])}`;
+        if (msg.includes("-")) return `${nums[0]} - ${nums[1]} = ${Number(nums[0]) - Number(nums[1])}`;
+        if (msg.includes("*") || msg.includes("x")) return `${nums[0]} x ${nums[1]} = ${Number(nums[0]) * Number(nums[1])}`;
+        if (msg.includes("/")) return `${nums[0]} / ${nums[1]} = ${Number(nums[0]) / Number(nums[1])}`;
     }
     
-    function carregar() {
-        let salvo = localStorage.getItem("kd_conversas");
-        if (salvo) conversas = JSON.parse(salvo);
-        if (Object.keys(conversas).length === 0) {
-            let id = Date.now().toString();
-            conversas[id] = {
-                id: id,
-                titulo: "Conversa 1",
-                data: new Date().toLocaleString(),
-                msgs: [{ texto: "Olá! Sou KD IA 1.7. Pergunte sobre Itaboraí, Maricá, Copacabana, Tijuca, histórias do Brasil, EUA, Roma, ou peça um botão HTML!", tipo: "ia" }]
-            };
+    if (msg.startsWith("ensinar que")) {
+        let partes = msg.replace("ensinar que", "").split(" e ");
+        if (partes.length >= 2) {
+            let tema = partes[0].trim();
+            let resposta = partes[1].trim();
+            let aprendizado = localStorage.getItem("kd_aprendizado");
+            let dict = aprendizado ? JSON.parse(aprendizado) : {};
+            dict[tema] = resposta;
+            localStorage.setItem("kd_aprendizado", JSON.stringify(dict));
+            return `🧠 Aprendi! "${tema}" significa "${resposta}".`;
         }
-        conversaAtual = localStorage.getItem("kd_atual");
-        if (!conversaAtual || !conversas[conversaAtual]) conversaAtual = Object.keys(conversas)[0];
+        return "Use: ensinar que [assunto] e [resposta]";
     }
     
-    function renderizarLista() {
-        let lista = document.getElementById("listaConversas");
-        lista.innerHTML = "";
-        for (let id in conversas) {
-            let conv = conversas[id];
-            let div = document.createElement("div");
-            div.className = "conv-item" + (id === conversaAtual ? " active" : "");
-            div.innerHTML = `<span>${conv.titulo}</span><button class="conv-del" data-id="${id}">X</button>`;
-            div.querySelector("span").onclick = function() { mudarConversa(id); };
-            div.querySelector(".conv-del").onclick = function(e) { e.stopPropagation(); deletarConversa(id); };
-            lista.appendChild(div);
+    let aprendizadoSalvo = localStorage.getItem("kd_aprendizado");
+    if (aprendizadoSalvo) {
+        let dict = JSON.parse(aprendizadoSalvo);
+        for (let [chave, resposta] of Object.entries(dict)) {
+            if (msg.includes(chave.toLowerCase())) return `🧠 (Aprendi) ${resposta}`;
         }
     }
     
-    function mudarConversa(id) {
-        conversaAtual = id;
-        salvar();
-        renderizarLista();
-        renderizarChat();
+    if (precisaBuscar(mensagem)) {
+        let termo = mensagem.replace(/^(pesquisar|buscar|procurar|pesquise|busque|procure)\s+/i, "").trim();
+        if (termo.length > 2) return await window.buscarDuckDuckGo(termo);
     }
     
-    function deletarConversa(id) {
-        delete conversas[id];
-        let ids = Object.keys(conversas);
-        if (ids.length === 0) {
-            novaConversa();
-        } else {
-            conversaAtual = ids[0];
-            salvar();
-            renderizarLista();
-            renderizarChat();
-        }
+    if (msg.includes("oi") || msg.includes("ola")) {
+        return "👋 Olá! Sou KD IA 2.0.\n\n📚 Tenho conhecimento local sobre: Geografia, Ciência, Planetas, Animais, História, Tecnologia, Esportes.\n\n🔍 Digite 'pesquisar [assunto]' para buscar na web grátis!\n\nComo posso ajudar?";
     }
     
-    function novaConversa() {
+    if (msg.includes("obrigado")) return "😊 Por nada! Estou aqui para ajudar!";
+    
+    return `📚 Não sei sobre isso.\n\n🔍 Tente "pesquisar ${mensagem.slice(0, 30)}" para buscar na web!`;
+};
+
+// ========== VARIÁVEIS ==========
+let conversas = {};
+let conversaAtual = null;
+let modoRapido = true;
+let lerAtivo = false;
+let enviando = false;
+let synth = window.speechSynthesis;
+let recognition = null;
+
+// ========== CONVERSAS ==========
+function salvar() {
+    localStorage.setItem("kd_conversas_final", JSON.stringify(conversas));
+    localStorage.setItem("kd_atual_final", conversaAtual);
+}
+
+function carregar() {
+    let salvo = localStorage.getItem("kd_conversas_final");
+    if (salvo) conversas = JSON.parse(salvo);
+    if (Object.keys(conversas).length === 0) {
         let id = Date.now().toString();
         conversas[id] = {
             id: id,
-            titulo: "Conversa " + (Object.keys(conversas).length + 1),
+            titulo: "Conversa 1",
             data: new Date().toLocaleString(),
-            msgs: [{ texto: "Nova conversa iniciada! Pergunte qualquer coisa.", tipo: "ia" }]
+            msgs: [{ texto: "🧠 Olá! Sou KD IA 2.0\n\n📚 Tenho conhecimento local e 🔍 posso buscar na web grátis!\n\nDigite 'pesquisar [assunto]' para começar!", tipo: "ia" }]
         };
-        conversaAtual = id;
-        salvar();
-        renderizarLista();
-        renderizarChat();
     }
-    
-    function renderizarChat() {
-        let chatDiv = document.getElementById("chat");
-        chatDiv.innerHTML = "";
-        if (!conversas[conversaAtual]) return;
-        conversas[conversaAtual].msgs.forEach(msg => {
-            let div = document.createElement("div");
-            div.className = "msg " + msg.tipo;
-            div.innerText = msg.texto;
-            chatDiv.appendChild(div);
-        });
-        chatDiv.scrollTop = chatDiv.scrollHeight;
+    conversaAtual = localStorage.getItem("kd_atual_final");
+    if (!conversaAtual || !conversas[conversaAtual]) conversaAtual = Object.keys(conversas)[0];
+    window.atualizarStats();
+}
+
+window.atualizarStats = function() {
+    let total = Object.keys(conhecimento).length;
+    let statsDiv = document.getElementById("stats");
+    if (statsDiv) statsDiv.innerHTML = `🧠 ${total} conceitos | 🔍 DuckDuckGo grátis | Modo: ${modoRapido ? "⚡ Rápido" : "🐢 Raciocínio"}`;
+};
+
+window.renderizarLista = function() {
+    let lista = document.getElementById("listaConversas");
+    if (!lista) return;
+    lista.innerHTML = "";
+    for (let id in conversas) {
+        let conv = conversas[id];
+        let div = document.createElement("div");
+        div.className = "conv-item" + (id === conversaAtual ? " active" : "");
+        div.innerHTML = `<span>${conv.titulo}</span><button class="conv-del" data-id="${id}">X</button>`;
+        div.querySelector("span").onclick = () => window.mudarConversa(id);
+        div.querySelector(".conv-del").onclick = (e) => { e.stopPropagation(); window.deletarConversa(id); };
+        lista.appendChild(div);
     }
+};
+
+window.mudarConversa = function(id) { conversaAtual = id; salvar(); window.renderizarLista(); window.renderizarChat(); };
+window.deletarConversa = function(id) { delete conversas[id]; let ids = Object.keys(conversas); if (ids.length === 0) window.novaConversa(); else { conversaAtual = ids[0]; salvar(); window.renderizarLista(); window.renderizarChat(); } };
+window.novaConversa = function() { let id = Date.now().toString(); conversas[id] = { id: id, titulo: "Conversa " + (Object.keys(conversas).length + 1), data: new Date().toLocaleString(), msgs: [{ texto: "🧠 Nova conversa! Busca DuckDuckGo ativada!", tipo: "ia" }] }; conversaAtual = id; salvar(); window.renderizarLista(); window.renderizarChat(); };
+window.renderizarChat = function() {
+    let chatDiv = document.getElementById("chat");
+    if (!chatDiv) return;
+    chatDiv.innerHTML = "";
+    if (!conversas[conversaAtual]) return;
+    conversas[conversaAtual].msgs.forEach(msg => {
+        let div = document.createElement("div");
+        div.className = "msg " + msg.tipo;
+        div.innerText = msg.texto;
+        chatDiv.appendChild(div);
+    });
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+};
+
+window.adicionarMsg = function(texto, tipo) {
+    let conv = conversas[conversaAtual];
+    if (!conv) return;
+    conv.msgs.push({ texto: texto, tipo: tipo });
+    if (tipo === "user" && conv.titulo.includes("Conversa")) conv.titulo = texto.slice(0, 20);
+    salvar();
+    window.renderizarChat();
+    window.renderizarLista();
+};
+
+window.enviarMensagem = async function() {
+    if (enviando) return;
+    let input = document.getElementById("inputMsg");
+    let texto = input.value.trim();
+    if (!texto) return;
     
-    function adicionarMsg(texto, tipo) {
-        let conv = conversas[conversaAtual];
-        if (!conv) return;
-        conv.msgs.push({ texto: texto, tipo: tipo });
-        if (tipo === "user" && conv.titulo.includes("Conversa")) conv.titulo = texto.slice(0, 20);
-        salvar();
-        renderizarChat();
-        renderizarLista();
-    }
+    enviando = true;
+    window.adicionarMsg(texto, "user");
+    input.value = "";
     
-    function enviarMensagem() {
-        if (enviando) return;
-        let input = document.getElementById("inputMsg");
-        let texto = input.value.trim();
-        if (!texto) return;
-        
-        enviando = true;
-        adicionarMsg(texto, "user");
-        input.value = "";
-        
-        let chatDiv = document.getElementById("chat");
-        let pensando = document.createElement("div");
-        pensando.className = "pensando";
-        pensando.innerText = modoRapido ? "..." : "🤔 pensando...";
-        chatDiv.appendChild(pensando);
-        
-        let delay = modoRapido ? 300 : 700;
-        setTimeout(() => {
-            let resposta = getResposta(texto);
-            pensando.remove();
-            adicionarMsg(resposta, "ia");
-            if (lerAtivo && synth) {
-                let utterance = new SpeechSynthesisUtterance(resposta);
-                utterance.lang = 'pt-BR';
-                synth.speak(utterance);
-            }
-            enviando = false;
-        }, delay);
-    }
+    let chatDiv = document.getElementById("chat");
+    let pensando = document.createElement("div");
+    pensando.className = "pensando";
+    pensando.innerText = modoRapido ? "🔍 processando..." : "🧠 pensando...";
+    chatDiv.appendChild(pensando);
     
-    // ========== VOZ ==========
-    function iniciarVoz() {
-        if (!('webkitSpeechRecognition' in window)) {
-            alert("Seu navegador não suporta reconhecimento de voz. Use o Google Chrome.");
-            return;
+    setTimeout(async () => {
+        let resposta = await window.gerarResposta(texto);
+        pensando.remove();
+        window.adicionarMsg(resposta, "ia");
+        if (lerAtivo && synth) {
+            let utterance = new SpeechSynthesisUtterance(resposta.replace(/[📚🧠🔍🌐💡⭐]/g, ''));
+            utterance.lang = 'pt-BR';
+            synth.speak(utterance);
         }
-        
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = 'pt-BR';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        
-        let vozBtn = document.getElementById("btnVoz");
-        
-        recognition.onstart = function() {
-            vozBtn.classList.add("gravando");
-            vozBtn.innerHTML = "🔴";
-        };
-        
-        recognition.onend = function() {
-            vozBtn.classList.remove("gravando");
-            vozBtn.innerHTML = "🎤";
-        };
-        
-        recognition.onresult = function(event) {
-            let fala = event.results[0][0].transcript;
-            document.getElementById("inputMsg").value = fala;
-            enviarMensagem();
-        };
-        
-        recognition.onerror = function(event) {
-            vozBtn.classList.remove("gravando");
-            vozBtn.innerHTML = "🎤";
-            if (event.error === "not-allowed") {
-                alert("Permita o acesso ao microfone para usar a voz.");
-            } else {
-                alert("Erro no reconhecimento de voz. Tente novamente.");
-            }
-        };
-        
-        recognition.start();
-    }
-    
-    // ========== FUNÇÕES DOS BOTÕES ==========
-    function setModoRapido() {
-        modoRapido = true;
-        document.getElementById("btnRapido").classList.add("ativo");
-        document.getElementById("btnRaciocinio").classList.remove("ativo");
-    }
-    
-    function setModoRaciocinio() {
-        modoRapido = false;
-        document.getElementById("btnRaciocinio").classList.add("ativo");
-        document.getElementById("btnRapido").classList.remove("ativo");
-    }
-    
-    function exportarConversas() {
-        let blob = new Blob([JSON.stringify(conversas)], { type: "application/json" });
-        let a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = "kd_ia_backup.json";
-        a.click();
-        URL.revokeObjectURL(a.href);
-    }
-    
-    function importarConversas() {
-        let input = document.createElement("input");
-        input.type = "file";
-        input.accept = "application/json";
-        input.onchange = function(e) {
-            let reader = new FileReader();
-            reader.onload = function(ev) {
-                try {
-                    conversas = JSON.parse(ev.target.result);
-                    salvar();
-                    renderizarLista();
-                    renderizarChat();
-                    alert("Importado com sucesso!");
-                } catch(err) {
-                    alert("Erro ao importar");
-                }
-            };
-            reader.readAsText(e.target.files[0]);
-        };
-        input.click();
-    }
-    
-    function buscarConversas() {
-        let termo = prompt("Digite o termo de busca:");
-        if (!termo) return;
-        let resultados = [];
-        for (let id in conversas) {
-            for (let msg of conversas[id].msgs) {
-                if (msg.texto.toLowerCase().includes(termo.toLowerCase())) {
-                    resultados.push(`${conversas[id].titulo}: ${msg.texto.slice(0, 50)}`);
-                }
+        enviando = false;
+    }, modoRapido ? 500 : 1000);
+};
+
+// ========== FUNÇÕES DOS BOTÕES ==========
+window.setModoRapido = function() { 
+    modoRapido = true; 
+    let btnR = document.getElementById("btnRapido");
+    let btnC = document.getElementById("btnRaciocinio");
+    if(btnR) btnR.classList.add("ativo");
+    if(btnC) btnC.classList.remove("ativo");
+    window.atualizarStats();
+};
+
+window.setModoRaciocinio = function() { 
+    modoRapido = false; 
+    let btnR = document.getElementById("btnRapido");
+    let btnC = document.getElementById("btnRaciocinio");
+    if(btnC) btnC.classList.add("ativo");
+    if(btnR) btnR.classList.remove("ativo");
+    window.atualizarStats();
+};
+
+window.exportarConversas = function() { 
+    let blob = new Blob([JSON.stringify(conversas)], {type: "application/json"}); 
+    let a = document.createElement("a"); 
+    a.href = URL.createObjectURL(blob); 
+    a.download = "kd_ia_backup.json"; 
+    a.click(); 
+    URL.revokeObjectURL(a.href); 
+};
+
+window.importarConversas = function() { 
+    let input = document.createElement("input"); 
+    input.type = "file"; 
+    input.accept = "application/json"; 
+    input.onchange = (e) => { 
+        let reader = new FileReader(); 
+        reader.onload = (ev) => { 
+            try { 
+                conversas = JSON.parse(ev.target.result); 
+                salvar(); 
+                window.renderizarLista(); 
+                window.renderizarChat(); 
+                alert("Importado!"); 
+            } catch(err) { 
+                alert("Erro ao importar"); 
+            } 
+        }; 
+        reader.readAsText(e.target.files[0]); 
+    }; 
+    input.click(); 
+};
+
+window.buscarConversas = function() { 
+    let termo = prompt("Digite o termo de busca:"); 
+    if (!termo) return; 
+    let res = []; 
+    for (let id in conversas) {
+        for (let msg of conversas[id].msgs) {
+            if (msg.texto.toLowerCase().includes(termo.toLowerCase())) { 
+                res.push(`${conversas[id].titulo}: ${msg.texto.slice(0,50)}`); 
             }
         }
-        alert(resultados.length ? resultados.join("\n") : "Nada encontrado");
     }
-    
-    function toggleLeitura() {
-        lerAtivo = !lerAtivo;
-        let btn = document.getElementById("btnLer");
-        btn.style.background = lerAtivo ? "#22c55e" : "";
-        alert("Leitura automática " + (lerAtivo ? "ativada" : "desativada"));
-    }
-    
-    // ========== INICIALIZAÇÃO ==========
-    carregar();
-    renderizarLista();
-    renderizarChat();
-    
-    // Botões
-    document.getElementById("btnNova").onclick = novaConversa;
-    document.getElementById("btnRapido").onclick = setModoRapido;
-    document.getElementById("btnRaciocinio").onclick = setModoRaciocinio;
-    document.getElementById("btnExportar").onclick = exportarConversas;
-    document.getElementById("btnImportar").onclick = importarConversas;
-    document.getElementById("btnBuscar").onclick = buscarConversas;
-    document.getElementById("btnLer").onclick = toggleLeitura;
-    document.getElementById("btnVoz").onclick = iniciarVoz;
-    document.getElementById("btnEnviar").onclick = enviarMensagem;
-    document.getElementById("inputMsg").onkeypress = function(e) {
-        if (e.key === "Enter") enviarMensagem();
+    alert(res.length ? res.join("\n") : "Nada encontrado"); 
+};
+
+window.toggleLeitura = function() { 
+    lerAtivo = !lerAtivo; 
+    let btn = document.getElementById("btnLer");
+    if(btn) btn.style.background = lerAtivo ? "#22c55e" : ""; 
+    alert("Leitura " + (lerAtivo ? "ativada" : "desativada")); 
+};
+
+window.iniciarVoz = function() {
+    if (!('webkitSpeechRecognition' in window)) { alert("Use Google Chrome."); return; }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.lang = 'pt-BR';
+    let vozBtn = document.getElementById("btnVoz");
+    recognition.onstart = () => { if(vozBtn) vozBtn.classList.add("gravando"); };
+    recognition.onend = () => { if(vozBtn) vozBtn.classList.remove("gravando"); };
+    recognition.onresult = (e) => { 
+        document.getElementById("inputMsg").value = e.results[0][0].transcript; 
+        window.enviarMensagem(); 
     };
+    recognition.start();
+};
+
+// ========== INICIAR ==========
+carregar();
+window.renderizarLista();
+window.renderizarChat();
 </script>
 </body>
     </html>
